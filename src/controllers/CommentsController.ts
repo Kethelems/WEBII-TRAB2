@@ -15,7 +15,7 @@ function requireAuth(req: Request, res: Response, next: any) {
   if (!req.session.user) {
     return res.status(401).json({ error: 'Login necessário' });
   }
-  next();
+    return next();
 }
 
 function uploadCommentImage(req: Request, res: Response, next: any) {
@@ -51,10 +51,10 @@ router.post('/', requireAuth, uploadCommentImage, async (req: Request, res: Resp
       }
     });
 
-    res.json({ success: true, comment });
+      return res.json({ success: true, comment });
   } catch (err) {
     console.error(err);
-    res.status(500).json({ error: 'Erro ao criar comentário' });
+      return res.status(500).json({ error: 'Erro ao criar comentário' });
   }
 });
 
@@ -84,9 +84,9 @@ router.put('/:id', requireAuth, async (req: Request, res: Response) => {
       }
     });
 
-    res.json({ success: true, comment: updatedComment });
+      return res.json({ success: true, comment: updatedComment });
   } catch (err) {
-    res.status(500).json({ error: 'Erro ao atualizar comentário' });
+      return res.status(500).json({ error: 'Erro ao atualizar comentário' });
   }
 });
 
@@ -112,9 +112,9 @@ router.delete('/:id', requireAuth, async (req: Request, res: Response) => {
       where: { id: commentId }
     });
 
-    res.json({ success: true });
+      return res.json({ success: true });
   } catch (err) {
-    res.status(500).json({ error: 'Erro ao excluir comentário' });
+      return res.status(500).json({ error: 'Erro ao excluir comentário' });
   }
 });
 

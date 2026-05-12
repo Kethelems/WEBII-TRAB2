@@ -1,0 +1,1 @@
+-- Migration vazia: roles já estão em português desde o início

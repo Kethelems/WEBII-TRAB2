@@ -14,7 +14,7 @@ const SellerProfileSchema = z.object({
 });
 
 function requireSeller(req: Request, res: Response, next: any) {
-  if (!req.session.user || (req.session.user.role !== 'seller' && req.session.user.role !== 'admin')) {
+  if (!req.session.user || (req.session.user.role !== 'vendedor' && req.session.user.role !== 'admin')) {
     return res.redirect('/login?error=Acesso restrito a vendedores');
   }
   next();
@@ -56,7 +56,7 @@ router.get('/:id', async (req: Request, res: Response) => {
   const sellerId = parseInt(req.params.id);
   
   const seller = await prisma.user.findUnique({
-    where: { id: sellerId, role: 'seller' },
+    where: { id: sellerId, role: 'vendedor' },
     include: {
       SellerProfile: true,
       Products: {

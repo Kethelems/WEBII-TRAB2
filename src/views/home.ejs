@@ -47,10 +47,13 @@
           </a>
           <nav class="hidden items-center gap-5 text-sm font-medium text-brand-800 md:flex">
             <a href="/" class="hover:text-accent-600">Produtos</a>
-            <% if (user && user.role === 'buyer') { %>
+            <% if (user && user.role === 'comprador') { %>
               <a href="/buyer/profile" class="hover:text-accent-600">Meu Perfil</a>
             <% } %>
-            <% if (user && (user.role === 'seller' || user.role === 'admin')) { %>
+            <% if (user && user.role === 'admin') { %>
+              <a href="/admin" class="hover:text-accent-600">Administração</a>
+            <% } %>
+            <% if (user && (user.role === 'vendedor' || user.role === 'admin')) { %>
               <a href="/seller-dashboard" class="hover:text-accent-600">Painel do vendedor</a>
             <% } %>
           </nav>
@@ -116,7 +119,7 @@
         <section>
           <div class="mb-4 flex items-center justify-between">
             <h2 class="font-display text-2xl font-bold">Produtos em destaque</h2>
-            <% if (user && (user.role === 'seller' || user.role === 'admin')) { %>
+            <% if (user && (user.role === 'vendedor' || user.role === 'admin')) { %>
               <a href="/seller-dashboard" class="text-sm font-semibold text-accent-600 hover:underline">Publicar produto</a>
             <% } %>
           </div>

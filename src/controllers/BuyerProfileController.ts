@@ -16,7 +16,7 @@ const BuyerProfileSchema = z.object({
 
 function requireBuyer(req: Request, res: Response, next: any) {
   // TRABALHO II: Controle de acesso restrito ao comprador
-  if (!req.session.user || req.session.user.role !== 'buyer') {
+  if (!req.session.user || req.session.user.role !== 'comprador') {
     return res.redirect('/login?error=Acesso restrito a compradores');
   }
   next();

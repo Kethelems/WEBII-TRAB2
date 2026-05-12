@@ -9,7 +9,7 @@ const router = Router();
 function requireSeller(req: Request, res: Response, next: NextFunction) {
   const role = req.session.user?.role;
 
-  if (!req.session.user || (role !== 'seller' && role !== 'admin')) {
+  if (!req.session.user || (role !== 'vendedor' && role !== 'admin')) {
     if (req.accepts('html')) {
       return res.redirect('/login?error=Entre como vendedor para publicar produtos.');
     }
@@ -68,10 +68,6 @@ router.get('/:id', async (req: Request, res: Response) => {
     where: { id: productId },
     include: {
       User: {
-        select: {
-          id: true,
-          name: true,
-        },
         include: {
           SellerProfile: true
         }
@@ -196,6 +192,44 @@ router.post('/', requireSeller, uploadProductImages, async (req: Request, res: R
   }
 
   return res.json({ message: 'Product created successfully' });
+});
+
+router.post('/:id/images', requireSeller, uploadProductImages, async (req: Request, res: Response) => {
+  const productId = parseInt(req.params.id);
+
+  const product = await prisma.product.findUnique({ where: { id: productId } });
+
+  if (!product) {
+    return res.status(404).json({ message: 'Produto não encontrado' });
+  }
+
+  if (req.session.user!.role !== 'admin' && product.userId !== req.session.user!.id) {
+    return res.status(403).json({ message: 'Não autorizado' });
+  }
+
+  if (!req.files || !Array.isArray(req.files) || req.files.length === 0) {
+    return res.redirect(`/seller-dashboard?error=Nenhuma imagem enviada.`);
+  }
+
+  const existingCount = await prisma.productImage.count({ where: { productId } });
+  const hasPrimary = existingCount === 0;
+
+  for (let i = 0; i < req.files.length; i++) {
+    const file = req.files[i];
+    const storedImage = await storeProductImage(file);
+    if (storedImage) {
+      await prisma.productImage.create({
+        data: {
+          imageUrl: storedImage.imageUrl,
+          imageStorage: storedImage.imageStorage,
+          isPrimary: hasPrimary && i === 0,
+          productId,
+        },
+      });
+    }
+  }
+
+  return res.redirect(`/seller-dashboard?success=Imagens adicionadas com sucesso.`);
 });
 
 export default router;

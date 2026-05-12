@@ -119,6 +119,7 @@
                   <th class="px-4 py-3 font-semibold">Estoque</th>
                   <th class="px-4 py-3 font-semibold">Preço</th>
                   <th class="px-4 py-3 font-semibold">Status</th>
+                  <th class="px-4 py-3 font-semibold">Ações</th>
                 </tr>
               </thead>
               <tbody class="divide-y divide-brand-200 bg-white">
@@ -131,8 +132,9 @@
                   <tr>
                     <td class="px-4 py-3">
                       <div class="flex items-center gap-3">
-                        <% if (product.imageUrl) { %>
-                          <img src="<%= product.imageUrl %>" alt="<%= product.name %>" class="h-14 w-14 rounded-xl object-cover" />
+                        <% const thumb = product.ProductImages && product.ProductImages.length > 0 ? product.ProductImages[0].imageUrl : product.imageUrl; %>
+                        <% if (thumb) { %>
+                          <img src="<%= thumb %>" alt="<%= product.name %>" class="h-14 w-14 rounded-xl object-cover" />
                         <% } else { %>
                           <div class="flex h-14 w-14 items-center justify-center rounded-xl bg-brand-100 text-[10px] font-semibold uppercase tracking-wider text-brand-600">Sem foto</div>
                         <% } %>
@@ -155,6 +157,12 @@
                         <span class="rounded-full bg-coral-500/10 px-2 py-1 text-xs font-semibold text-coral-600">Sem estoque</span>
                       <% } %>
                     </td>
+                    <td class="px-4 py-3">
+                      <button onclick="abrirModalFoto(<%= product.id %>, '<%= product.name.replace(/'/g, "\\'") %>')"
+                              class="rounded-lg border border-brand-300 px-3 py-1.5 text-xs font-semibold hover:bg-brand-100">
+                        + Foto
+                      </button>
+                    </td>
                   </tr>
                 <% }) %>
               </tbody>
@@ -163,5 +171,37 @@
         </section>
       </main>
     </div>
+    <!-- Modal upload de foto -->
+    <div id="modalFoto" class="fixed inset-0 z-50 hidden items-center justify-center bg-black/50">
+      <div class="w-full max-w-md rounded-3xl bg-white p-6 shadow-xl">
+        <h3 class="font-display text-xl font-bold" id="modalFotoTitulo">Adicionar fotos</h3>
+        <form id="formFoto" method="POST" enctype="multipart/form-data" class="mt-4 space-y-4">
+          <label class="block">
+            <span class="mb-1 block text-sm font-medium">Selecione as imagens (até 5)</span>
+            <input name="images" type="file" accept="image/png,image/jpeg,image/webp,image/gif" multiple required
+                   class="w-full rounded-xl border border-brand-300 px-4 py-2.5 text-sm file:mr-4 file:rounded-lg file:border-0 file:bg-brand-100 file:px-3 file:py-2 file:font-semibold" />
+          </label>
+          <div class="flex gap-3">
+            <button type="submit" class="flex-1 rounded-xl bg-brand-900 py-2.5 font-semibold text-white hover:bg-brand-800">Enviar</button>
+            <button type="button" onclick="fecharModalFoto()" class="flex-1 rounded-xl border border-brand-300 py-2.5 font-semibold hover:bg-brand-100">Cancelar</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <script>
+      function abrirModalFoto(id, nome) {
+        document.getElementById('modalFotoTitulo').textContent = 'Adicionar fotos — ' + nome;
+        document.getElementById('formFoto').action = '/products/' + id + '/images';
+        const modal = document.getElementById('modalFoto');
+        modal.classList.remove('hidden');
+        modal.classList.add('flex');
+      }
+      function fecharModalFoto() {
+        const modal = document.getElementById('modalFoto');
+        modal.classList.add('hidden');
+        modal.classList.remove('flex');
+      }
+    </script>
   </body>
 </html>

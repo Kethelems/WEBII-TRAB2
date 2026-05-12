@@ -53,11 +53,15 @@ router.post('/', async (req: Request, res: Response) => {
     email: String(req.body.email || '').trim().toLowerCase(),
     password: String(req.body.password || ''),
     cpf: String(req.body.cpf || '').trim(),
-    role: String(req.body.role || 'buyer'),
+    role: String(req.body.role || 'comprador'),
   };
 
   if (!user.name || !user.email || !user.password || !user.cpf) {
     return res.status(400).json({ message: 'Name, email, password and CPF are required' });
+  }
+
+  if (!['comprador', 'vendedor', 'admin'].includes(user.role)) {
+    return res.status(400).json({ message: 'Perfil invalido. Use comprador, vendedor ou admin.' });
   }
   
   // nao pode existir cpf e email iguais
@@ -79,7 +83,9 @@ router.post('/', async (req: Request, res: Response) => {
       data: {
         ...user,
         password: hashPassword(user.password),
-      }
+        active: true,
+        emailVerified: true,
+      },
     });
   } catch (error) {
     console.error(error);

@@ -14,9 +14,19 @@
         "migrate:reset": "npx prisma migrate reset",
         "db:generate": "npx prisma generate",
         "db:studio": "npx prisma studio",
-        "setup": "npm install && npm run migrate && npm run db:generate"
+        "db:seed": "npx prisma db seed",
+        "setup": "npm install && npm run migrate && npm run db:generate && npm run db:seed"
     },
-    "keywords": ["marketplace", "typescript", "express", "prisma", "docker"],
+    "prisma": {
+        "seed": "npx ts-node --compiler-options {\"module\":\"CommonJS\"} prisma/seed.ts"
+    },
+    "keywords": [
+        "marketplace",
+        "typescript",
+        "express",
+        "prisma",
+        "docker"
+    ],
     "author": "",
     "license": "ISC",
     "type": "commonjs",
@@ -29,16 +39,18 @@
         "express": "4.21.2",
         "express-session": "^1.19.0",
         "multer": "^2.0.2",
+        "nodemailer": "^8.0.7",
         "sqlite": "^5.1.1",
         "sqlite3": "5.1.7",
         "zod": "^4.3.6"
     },
     "devDependencies": {
-        "@types/multer": "^2.0.0",
         "@types/better-sqlite3": "^7.6.13",
         "@types/express": "4.17.21",
         "@types/express-session": "^1.18.2",
+        "@types/multer": "^2.0.0",
         "@types/node": "22.13.10",
+        "@types/nodemailer": "^8.0.0",
         "prisma": "5.9.1",
         "ts-node-dev": "2.0.0",
         "typescript": "5.8.2"
